@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "customer-service")
-@CircuitBreaker(name = "customer-service" , fallbackMethod = "getDefaultCustomer")
 public interface CustomerServiceRestClient {
+    @CircuitBreaker(name = "customer-service" , fallbackMethod = "getDefaultCustomer")
     @GetMapping("/customers/{customerId}")
     Customer findCustomerById(@PathVariable Long customerId);
 
-    default Customer getDefaultCustomer(Long customerId) {
+    default Customer getDefaultCustomer(Long customerId, Exception exception) {
         Customer customer = new Customer();
-        customer.setId(null);
+        customer.setId(customerId);
         customer.setName("Default");
         return customer;
     }
